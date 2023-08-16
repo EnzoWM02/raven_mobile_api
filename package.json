@@ -1,0 +1,19 @@
+{
+  "name": "raven_mobile_api",
+  "version": "1.0.0",
+  "description": "A project made with NodeJS and ExpressJS to run as an API to a social network named Raven",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "EnzoWM02, Huio-op",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.2"
+  }
+}
