@@ -1,12 +1,10 @@
-var express = require("express");
-var app = express();
+import express from "express";
+import routes from "routes/Routes";
 
-import { env } from './config/globals';
+const app = express();
+const PORT = 3000;
 
-app.get("/", function (req: any, res: any) {
-  res.send("Hello World!");
-});
+app.use(express.json());
+app.use("/api", routes);
 
-app.listen(env.PORT, function () {
-  console.log(`Example app listening on port ${env.PORT}!`);
-});
+app.listen(PORT);
