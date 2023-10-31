@@ -31,6 +31,16 @@ export default class UserService {
     return user;
   }
 
+  async findUserByEmailAndPassword({email, password}: User) {
+    const user = await Prisma.user.findUnique({
+      where: {
+        email,
+        password,
+      },
+    });
+    return user;
+  }
+
   async deleteUserById(id: number) {
     await Prisma.user.delete({
       where: {

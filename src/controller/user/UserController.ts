@@ -38,4 +38,16 @@ userControllerRouter.post("/", async (req: UserRequest, res: Response) => {
 
 userControllerRouter.delete("/", async (req: UserRequest, res: Response) => {});
 
+userControllerRouter.post("/login",async (req:UserRequest, res: Response) => {
+  try {
+    const user = await userService.findUserByEmailAndPassword(req.body);
+    if (!user) {
+      return res.status(404).send();
+    }
+    return res.status(200).send(user);
+  } catch (e) {
+    res.status(502).end(e);
+  }
+})
+
 export default userControllerRouter;
