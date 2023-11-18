@@ -1,5 +1,5 @@
 # Raven Mobile Api
-This project has the objective of controlling all requests, security, and processing all data from Raven Social Network.
+This project is the manager of all requests, security, and processing all data from Raven Social Network.
 
 ## Technologies
 
