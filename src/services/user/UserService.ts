@@ -1,20 +1,32 @@
-import { User } from "@prisma/client";
-import { Prisma } from "prisma/client";
-import crypto from "crypto";
+import { User } from '@prisma/client';
+import { Prisma } from 'prisma/client';
+import { Login } from 'controller/login/LoginController';
+import { CreateAccountRequest } from 'controller/login/RegisterAccountController';
 
 export default class UserService {
-  async createUser({ name, email, password }: User) {
+  async createUser(user: User) {
     await Prisma.user.create({
       data: {
-        name,
-        email,
-        password,
+        ...user,
+        userProfile: {
+          create: {},
+        },
       },
     });
+  }
 
-    const token = crypto.randomBytes(16).toString("hex");
-
-    return token;
+  async createInitialUser(initialUser: CreateAccountRequest["body"]) {
+    const birthDate = new Date(initialUser.birthDate);
+    const user = await Prisma.user.create({
+      data: {
+        ...initialUser,
+        birthDate,
+        userProfile: {
+          create: {},
+        },
+      },
+    });
+    return user;
   }
 
   async findAllUsers() {
@@ -31,12 +43,15 @@ export default class UserService {
     return user;
   }
 
-  async findUserByEmailAndPassword({email, password}: User) {
+  async findUserByEmailAndPassword({ email, password }: User | Login) {
     const user = await Prisma.user.findUnique({
       where: {
         email,
         password,
       },
+      include: {
+        loginToken: true
+      }
     });
     return user;
   }
