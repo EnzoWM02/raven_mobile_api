@@ -8,18 +8,32 @@ datasource db {
 }
 
 model User {
-  id                Int          @id @default(autoincrement())
-  email             String       @unique
+  id                Int             @id @default(autoincrement())
+  email             String          @unique
   password          String
   name              String
-  uniqueKey         String       @unique @map("unique_key")
+  uniqueKey         String          @unique @map("unique_key")
   phone             String?
-  birthDate         DateTime     @map("birth_date")
-  preferredLanguage String       @default("pt_BR") @map("preferred_language")
-  createdAt         DateTime     @default(now()) @map("created_at")
-  updatedAt         DateTime     @updatedAt @map("updated_at")
+  birthDate         DateTime        @map("birth_date")
+  preferredLanguage String          @default("pt_BR") @map("preferred_language")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
   userProfile       UserProfile?
   loginToken        LoginToken?
+  //eu acho que isso ta invertido ---
+  followers         UserFollowing[] @relation("UserFollower")
+  following         UserFollowing[] @relation("UserFollowing")
+  // --------
+  posts             Post[]
+  //The groups this user is master of
+  masterGroups      Group[]
+  //The groups this user participates
+  groups            UserGroup[]
+  likes             Like[]
+  comments          Comment[]
+  reports           Report[]
+  blocked           UserBlock[]     @relation("UserBlocked")
+  blockedBy         UserBlock[]     @relation("UserBlockedBy")
 
   @@map("users")
 }
@@ -51,4 +65,141 @@ model LoginToken {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("login_token")
+}
+
+model UserFollowing {
+  follower    User     @relation("UserFollower", fields: [followerId], references: [id])
+  followerId  Int      @map("follower_id") //Esse é o que salva no banco, é o id do usuario dono da relacao
+  following   User     @relation("UserFollowing", fields: [followingId], references: [id]) //Isso aq é pro prisma entender
+  followingId Int      @map("following_id") //Essa é o id do cara seguido
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@id([followerId, followingId])
+  @@map("user_followings")
+}
+
+model Group {
+  id          Int         @id @default(autoincrement())
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  master      User        @relation(fields: [masterId], references: [id])
+  masterId    Int         @map("master_id")
+  name        String
+  description String
+  imageId     Int         @map("image_id")
+  users       UserGroup[]
+  posts       Post[]
+
+  @@map("groups")
+}
+
+model UserGroup {
+  group     Group    @relation(fields: [groupId], references: [id])
+  groupId   Int      @map("group_id")
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @map("user_id")
+  role      Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([groupId, userId])
+  @@map("user_groups")
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  owner     User      @relation(fields: [ownerId], references: [id])
+  ownerId   Int       @map("owner_id")
+  content   String
+  //All reposts this post has
+  reposts   Post[]    @relation("reposts")
+  //If this post is a repost, this relation will have the original post
+  repost    Post?     @relation("reposts", fields: [repostId], references: [id])
+  repostId  Int?      @map("repost_id")
+  group     Group?    @relation(fields: [groupId], references: [id])
+  groupId   Int?      @map("group_id")
+  likes     Like[]
+  comments  Comment[]
+  medias    Media[]
+  reports   Report[]
+
+  @@map("posts")
+}
+
+model Like {
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @map("user_id")
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int      @map("post_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([userId, postId])
+  @@map("likes")
+}
+
+model Comment {
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  originalPost   Post      @relation(fields: [originalPostId], references: [id])
+  originalPostId Int       @map("original_post_id")
+  user           User      @relation(fields: [userId], references: [id])
+  userId         Int       @map("user_id")
+  //This relation will have all childComments to this Comment
+  childComments  Comment[] @relation("parentChildComment")
+  //If this comment is child of other comment, the parent will be it
+  parent         Comment   @relation("parentChildComment", fields: [parentId], references: [id])
+  parentId       Int       @map("parentId")
+  content        String
+
+  @@map("comments")
+}
+
+model Media {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int      @map("post_id")
+  fileId    Int      @map("file_id")
+  tags      Tag[]
+
+  @@map("medias")
+}
+
+model Tag {
+  content   String   @id
+  posts     Media[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("tags")
+}
+
+model Report {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @map("user_id")
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int      @map("post_id")
+
+  @@map("reports")
+}
+
+model UserBlock {
+  user          User     @relation("UserBlocked", fields: [userId], references: [id])
+  userId        Int      @map("user_id")
+  blockedUser   User     @relation("UserBlockedBy", fields: [blockedUserId], references: [id])
+  blockedUserId Int      @map("blocked_user_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@id([userId, blockedUserId])
+  @@map("user_blocks")
 }
