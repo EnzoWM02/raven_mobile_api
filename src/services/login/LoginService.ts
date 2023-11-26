@@ -1,4 +1,4 @@
-import { Login } from 'controller/login/LoginController';
+import { ILogin } from 'controller/login/LoginController';
 import UserService from 'services/user/UserService';
 import HttpError from 'utils/HttpError';
 import crypto from 'crypto';
@@ -10,7 +10,7 @@ export default class LoginService {
   userService = new UserService();
   loginTokenService = new LoginTokenService();
 
-  async handleLogin({ email, password }: Login) {
+  async handleLogin({ email, password }: ILogin) {
     const user = await this.userService.findUserByEmailAndPassword({ email, password });
     if (!user) {
       throw new HttpError('User not found', 404);

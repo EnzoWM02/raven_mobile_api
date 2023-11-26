@@ -4,7 +4,6 @@ var cors = require('cors');
 import { env } from 'config/globals';
 import bypassAuthRoutes from 'routes/BypassAuthRoutes';
 import handleHttpError from 'middlewares/errors/handleHttpError';
-import handleAuth from 'middlewares/auth/handleAuth';
 
 const app = express();
 
@@ -17,7 +16,6 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/', bypassAuthRoutes);
-app.use(handleAuth);
 app.use('/api', routes);
 
 app.use(handleHttpError);

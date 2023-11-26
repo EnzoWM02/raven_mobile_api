@@ -5,14 +5,14 @@ import HttpError from 'utils/HttpError';
 const loginControllerRoute = Router();
 const loginService = new LoginService();
 
-export interface Login {
+export interface ILogin {
   email: string;
   password: string;
   token?: string;
 }
 
 interface LoginRequest extends Request {
-  body: Login;
+  body: ILogin;
 }
 
 loginControllerRoute.post('/', async (req: LoginRequest, res: Response, next: NextFunction) => {
@@ -21,6 +21,7 @@ loginControllerRoute.post('/', async (req: LoginRequest, res: Response, next: Ne
       throw new HttpError('Missing login information', 401);
     }
 
+    console.log(req.body);
     const token = await loginService.handleLogin(req.body);
     if (token) {
       res.status(202);

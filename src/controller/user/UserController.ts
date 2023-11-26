@@ -10,21 +10,26 @@ export interface UserRequest extends Request {
   body: User;
 }
 
-userControllerRouter.get('/', async (req: UserRequest, res: Response) => {
+userControllerRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.send(await userService.findAllUsers());
   } catch (e) {
-    throw new HttpError('Unable to fetch all Users');
+    next(new HttpError('Unable to fetch all Users'));
   }
 });
 
 userControllerRouter.get('/:id', async (req: UserRequest, res: Response, next: NextFunction) => {
   const id = parseInt(req.params.id);
-  const user = await userService.findUserById(id);
+  if (!id) return next(new HttpError('This request needs an id param', 405));
 
-  if (!user) return next(new HttpError('User not found', 404));
+  try {
+    const user = await userService.findUserById(id);
+    if (!user) throw new HttpError(`User with id: ${id} not found`, 404);
 
-  res.status(200).send(user);
+    res.status(200).send(user);
+  } catch (e) {
+    next(e);
+  }
 });
 
 userControllerRouter.post('/', async (req: UserRequest, res: Response) => {
@@ -36,6 +41,6 @@ userControllerRouter.post('/', async (req: UserRequest, res: Response) => {
   }
 });
 
-userControllerRouter.delete('/', async (req: UserRequest, res: Response) => {});
+userControllerRouter.delete('/', async () => {});
 
 export default userControllerRouter;

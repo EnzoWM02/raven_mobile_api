@@ -1,11 +1,11 @@
 import { User } from '@prisma/client';
 import { Prisma } from 'prisma/client';
-import { Login } from 'controller/login/LoginController';
+import { ILogin } from 'controller/login/LoginController';
 import { CreateAccountRequest } from 'controller/login/RegisterAccountController';
 
 export default class UserService {
   async createUser(user: User) {
-    await Prisma.user.create({
+    return await Prisma.user.create({
       data: {
         ...user,
         userProfile: {
@@ -43,7 +43,7 @@ export default class UserService {
     return user;
   }
 
-  async findUserByEmailAndPassword({ email, password }: User | Login) {
+  async findUserByEmailAndPassword({ email, password }: User | ILogin) {
     const user = await Prisma.user.findUnique({
       where: {
         email,
