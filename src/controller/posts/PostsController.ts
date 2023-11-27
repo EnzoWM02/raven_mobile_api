@@ -14,7 +14,7 @@ postsControllerRouter.get('/', async (req: Request, res: Response, next: NextFun
   try {
     res.send(await postsService.findAllPosts());
   } catch (e) {
-    next(new HttpError('Unable to fetch all Posts'));
+    next(new HttpError('Unable to fetch all Posts', 404, e));
   }
 });
 
@@ -23,7 +23,6 @@ postsControllerRouter.get('/:id', async (req: Request, res: Response, next: Next
   if (!id) return next(new HttpError(`This request needs a post id`, 405));
   try {
     const post = await postsService.findPost(id);
-    console.log(post);
     if (!post) throw new HttpError(`Post with id ${id} not found`, 404);
 
     res.status(200).send(post);
@@ -35,10 +34,9 @@ postsControllerRouter.get('/:id', async (req: Request, res: Response, next: Next
 postsControllerRouter.post('/', async (req: PostRequest, res: Response, next: NextFunction) => {
   try {
     const post = await postsService.createPost(req.body);
-    console.log(`poststst`, post);
     res.status(201).send(post);
   } catch (e) {
-    next(new HttpError('Could not create post', 502));
+    next(new HttpError('Could not create post', 502, e));
   }
 });
 
@@ -50,19 +48,19 @@ postsControllerRouter.put('/:id', async (req: PostRequest, res: Response, next: 
     const updatedPost = await postsService.updatePost(req.body, id);
     res.status(200).send(updatedPost);
   } catch (e) {
-    next(new HttpError('Could not update post', 502));
+    next(new HttpError('Could not update post', 502, e));
   }
 });
 
 postsControllerRouter.delete('/:id', async (req: PostRequest, res: Response, next: NextFunction) => {
-    const id = parseInt(req.params.id);
-    if (!id) return next(new HttpError(`This request needs a post id`, 405));
+  const id = parseInt(req.params.id);
+  if (!id) return next(new HttpError(`This request needs a post id`, 405));
 
-    try {
-        await postsService.deletePost(id);
-    } catch (e) {
-        next(new HttpError('Could not delete post', 502));
-      }
-})
+  try {
+    await postsService.deletePost(id);
+  } catch (e) {
+    next(new HttpError('Could not delete post', 502, e));
+  }
+});
 
 export default postsControllerRouter;

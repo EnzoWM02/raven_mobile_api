@@ -3,7 +3,11 @@ import { Prisma } from 'prisma/client';
 
 export default class PostsService {
   async findAllPosts() {
-    return await Prisma.post.findMany();
+    return await Prisma.post.findMany({
+      include: {
+        owner: true,
+      }
+    });
   }
 
   async findPost(id: number) {
@@ -11,6 +15,9 @@ export default class PostsService {
       where: {
         id,
       },
+      include: {
+        owner: true
+      }
     });
   }
 

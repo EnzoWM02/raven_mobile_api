@@ -20,4 +20,6 @@ app.use('/api', routes);
 
 app.use(handleHttpError);
 
-app.listen(env.PORT);
+app.listen(env.PORT, () => {
+  console.log('Server loaded on PORT:', env.PORT);
+});

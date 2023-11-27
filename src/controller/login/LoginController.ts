@@ -21,7 +21,6 @@ loginControllerRoute.post('/', async (req: LoginRequest, res: Response, next: Ne
       throw new HttpError('Missing login information', 401);
     }
 
-    console.log(req.body);
     const token = await loginService.handleLogin(req.body);
     if (token) {
       res.status(202);

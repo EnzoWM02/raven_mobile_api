@@ -15,7 +15,7 @@ export default class UserService {
     });
   }
 
-  async createInitialUser(initialUser: CreateAccountRequest["body"]) {
+  async createInitialUser(initialUser: CreateAccountRequest['body']) {
     const birthDate = new Date(initialUser.birthDate);
     const user = await Prisma.user.create({
       data: {
@@ -50,10 +50,22 @@ export default class UserService {
         password,
       },
       include: {
-        loginToken: true
-      }
+        loginToken: true,
+      },
     });
     return user;
+  }
+
+  async updateUser(user: User, id: number) {
+    const updatedUser = await Prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        ...user,
+      },
+    });
+    return updatedUser;
   }
 
   async deleteUserById(id: number) {
