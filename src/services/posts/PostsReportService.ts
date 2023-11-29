@@ -3,7 +3,16 @@ import { Prisma } from 'prisma/client';
 
 export default class PostsReportService {
   async findAllPostReports() {
-    return await Prisma.post.findMany();
+    return await Prisma.report.findMany({
+      include: {
+        post: {
+          include: {
+            owner: true            
+          }
+        },
+        user: true,
+      }
+    });
   }
 
   async findPostReport(id: number) {
