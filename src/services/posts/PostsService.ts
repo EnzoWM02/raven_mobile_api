@@ -6,6 +6,7 @@ export default class PostsService {
     return await Prisma.post.findMany({
       include: {
         owner: true,
+        likes: true,
       }
     });
   }
@@ -16,7 +17,8 @@ export default class PostsService {
         id,
       },
       include: {
-        owner: true
+        owner: true,
+        likes: true,
       }
     });
   }

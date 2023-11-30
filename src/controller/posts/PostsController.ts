@@ -62,11 +62,14 @@ postsControllerRouter.post('/:id/like', async (req: LikeRequest, res: Response, 
     })
 
     if (postLike) {
-      
+      const like = await likesService.deleteLikeInPost(req.body.userId, postId);
+      return res.status(200).send('Deleted');
     }
 
+    const like = await likesService.createLikeInPost(req.body.userId, postId);
+    res.status(201).send(like);
   } catch (e) {
-
+    next(new HttpError('Could not like a post', 502, e));
   }
 })
 

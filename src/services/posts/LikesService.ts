@@ -17,4 +17,15 @@ export default class LikesService {
       },
     });
   }
+
+  async deleteLikeInPost(userId: number, postId: number) {
+    return await Prisma.like.delete({
+      where: {
+        userId_postId: {
+          userId,
+          postId,
+        }
+      }
+    });
+  }
 }
