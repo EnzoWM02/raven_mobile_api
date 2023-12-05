@@ -40,6 +40,19 @@ postsControllerRouter.get('/:id', async (req: Request, res: Response, next: Next
   }
 });
 
+postsControllerRouter.get('/user/:id', async (req: Request, res: Response, next: NextFunction) => {
+  const id = parseInt(req.params.id);
+  if (!id) return next(new HttpError(`This request needs a post id`, 405));
+  try {
+    const post = await postsService.findPostByUserId(id);
+    if (!post) throw new HttpError(`User with id ${id} not found`, 404);
+
+    res.status(200).send(post);
+  } catch (e) {
+    next(e);
+  }
+});
+
 postsControllerRouter.post('/', async (req: PostRequest, res: Response, next: NextFunction) => {
   try {
     const post = await postsService.createPost(req.body);
@@ -62,7 +75,7 @@ postsControllerRouter.post('/:id/like', async (req: LikeRequest, res: Response, 
     })
 
     if (postLike) {
-      const like = await likesService.deleteLikeInPost(req.body.userId, postId);
+      await likesService.deleteLikeInPost(req.body.userId, postId);
       return res.status(200).send('Deleted');
     }
 

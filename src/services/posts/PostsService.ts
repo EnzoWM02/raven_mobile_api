@@ -23,6 +23,18 @@ export default class PostsService {
     });
   }
 
+  async findPostByUserId(id: number) {
+    return await Prisma.post.findMany({
+      where: {
+        ownerId: id,
+      },
+      include: {
+        owner: true,
+        likes: true,
+      }
+    });
+  }
+
   async createPost(post: Post) {
     const postCreated = await Prisma.post.create({
         data: {
