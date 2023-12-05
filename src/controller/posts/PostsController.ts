@@ -1,5 +1,4 @@
-import { Like, Post } from '@prisma/client';
-import { Prisma } from 'prisma/client';
+import { Post } from '@prisma/client';
 import { NextFunction, Request, Response, Router } from 'express';
 import LikesService from 'services/posts/LikesService';
 import PostsService from 'services/posts/PostsService';
@@ -67,12 +66,7 @@ postsControllerRouter.post('/:id/like', async (req: LikeRequest, res: Response, 
   if (!postId) return next(new HttpError(`This request needs a post id`, 405));
 
   try {
-    const postLike = await Prisma.like.findFirst({
-      where: {
-        userId: req.body.userId,
-        postId
-      }
-    })
+    const postLike = await likesService.findLikeByPostIdAndUserId(req.body.userId, postId);
 
     if (postLike) {
       await likesService.deleteLikeInPost(req.body.userId, postId);
