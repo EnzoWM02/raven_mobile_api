@@ -63,6 +63,8 @@ export default class UserService {
   }
 
   async updateUser({user, userProfile}: UserRequest['body'], id: number) {
+    const { id: userProfileId, ...restUserProfile } = userProfile;
+
     const updatedUser = await Prisma.user.update({
       where: {
         id,
@@ -72,10 +74,10 @@ export default class UserService {
         userProfile: {
           update: {
             where: {
-              id: userProfile.id,
+              id: userProfileId,
             },
             data: {
-              ...userProfile,
+              ...restUserProfile,
             }
           }
         }
