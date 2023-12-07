@@ -142,16 +142,17 @@ model Like {
 }
 
 model Comment {
-  id                    Int       @id @default(autoincrement())
-  createdAt             DateTime  @default(now()) @map("created_at")
-  updatedAt             DateTime  @updatedAt @map("updated_at")
-  owner                 User      @relation(fields: [ownerId], references: [id])
-  ownerId               Int       @map("owner_id")
-  originalPost          Post      @relation(fields: [originalPostId], references: [id])
-  originalPostId        Int       @map("original_post_id")
-  childComments         Comment[] @relation("childComments")
-  childCommentsRelation Comment[] @relation("childComments")
-  content               String
+  id              Int       @id @default(autoincrement())
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  owner           User      @relation(fields: [ownerId], references: [id])
+  ownerId         Int       @map("owner_id")
+  originalPost    Post      @relation(fields: [originalPostId], references: [id])
+  originalPostId  Int       @map("original_post_id")
+  parentCommentId Int?      @map("parent_comment_id")
+  parentComment   Comment?  @relation("parentComment", fields: [parentCommentId], references: [id])
+  childComments   Comment[] @relation("parentComment")
+  content         String
 
   @@map("comments")
 }
