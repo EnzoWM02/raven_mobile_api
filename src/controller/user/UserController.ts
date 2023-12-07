@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { User, UserProfile } from '@prisma/client';
 import { NextFunction, Request, Response, Router } from 'express';
 import UserService from 'services/user/UserService';
 import HttpError from 'utils/HttpError';
@@ -7,7 +7,10 @@ const userControllerRouter = Router();
 const userService = new UserService();
 
 export interface UserRequest extends Request {
-  body: User;
+  body: {
+    user: User,
+    userProfile: UserProfile,
+  };
 }
 
 userControllerRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
@@ -28,13 +31,13 @@ userControllerRouter.get('/:id', async (req: UserRequest, res: Response, next: N
 
     res.status(200).send(user);
   } catch (e) {
-    next(e);
+    next(new HttpError('Unable to fetch User', 404, e));
   }
 });
 
 userControllerRouter.post('/', async (req: UserRequest, res: Response, next: NextFunction) => {
   try {
-    req.body.birthDate = new Date(req.body.birthDate);
+    req.body.user.birthDate = new Date(req.body.user.birthDate);
     const user = await userService.createUser(req.body);
     res.status(201).send(user);
   } catch (e) {

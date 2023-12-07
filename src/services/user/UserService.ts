@@ -2,14 +2,17 @@ import { User } from '@prisma/client';
 import { Prisma } from 'prisma/client';
 import { ILogin } from 'controller/login/LoginController';
 import { CreateAccountRequest } from 'controller/login/RegisterAccountController';
+import { UserRequest } from 'controller/user/UserController';
 
 export default class UserService {
-  async createUser(user: User) {
+  async createUser({user, userProfile}: UserRequest['body']) {
     return await Prisma.user.create({
       data: {
         ...user,
         userProfile: {
-          create: {},
+          create: {
+            ...userProfile,
+          },
         },
       },
     });
@@ -59,13 +62,23 @@ export default class UserService {
     return user;
   }
 
-  async updateUser(user: User, id: number) {
+  async updateUser({user, userProfile}: UserRequest['body'], id: number) {
     const updatedUser = await Prisma.user.update({
       where: {
         id,
       },
       data: {
         ...user,
+        userProfile: {
+          update: {
+            where: {
+              id: userProfile.id,
+            },
+            data: {
+              ...userProfile,
+            }
+          }
+        }
       },
     });
     return updatedUser;

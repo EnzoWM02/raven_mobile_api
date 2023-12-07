@@ -3,6 +3,8 @@ import { NextFunction, Request, Response, Router } from 'express';
 import LikesService from 'services/posts/LikesService';
 import PostsService from 'services/posts/PostsService';
 import HttpError from 'utils/HttpError';
+import postsReportControllerRouter from './PostsReportController';
+import commentsControllerRoute from './CommentsController';
 
 const postsControllerRouter = Router();
 const postsService = new PostsService();
@@ -18,6 +20,9 @@ interface LikeRequest extends Request {
   }
 }
 
+postsControllerRouter.use('/report', postsReportControllerRouter);
+postsControllerRouter.use('/comment', commentsControllerRoute);
+
 postsControllerRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.send(await postsService.findAllPosts());
@@ -28,6 +33,7 @@ postsControllerRouter.get('/', async (req: Request, res: Response, next: NextFun
 
 postsControllerRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   const id = parseInt(req.params.id);
+  console.log('id', req.params.id);
   if (!id) return next(new HttpError(`This request needs a post id`, 405));
   try {
     const post = await postsService.findPost(id);
@@ -35,7 +41,7 @@ postsControllerRouter.get('/:id', async (req: Request, res: Response, next: Next
 
     res.status(200).send(post);
   } catch (e) {
-    next(e);
+    next(new HttpError('Unable to fetch post', 404, e));
   }
 });
 
@@ -48,7 +54,7 @@ postsControllerRouter.get('/user/:id', async (req: Request, res: Response, next:
 
     res.status(200).send(post);
   } catch (e) {
-    next(e);
+    next(new HttpError('Unable to get post for user', 404, e));
   }
 });
 

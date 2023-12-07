@@ -27,7 +27,7 @@ postsReportControllerRouter.get('/:id', async (req: Request, res: Response, next
 
     res.status(200).send(report);
   } catch (e) {
-    next(e);
+    next(new HttpError('Unable to fetch post report', 404, e));
   }
 });
 
