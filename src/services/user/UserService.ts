@@ -39,6 +39,9 @@ export default class UserService {
       where: {
         id,
       },
+      include: {
+        userProfile: true,
+      }
     });
     return user;
   }
