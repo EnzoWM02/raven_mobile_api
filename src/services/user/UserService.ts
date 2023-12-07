@@ -63,7 +63,7 @@ export default class UserService {
   }
 
   async updateUser({user, userProfile}: UserRequest['body'], id: number) {
-    const { id: userProfileId, ...restUserProfile } = userProfile;
+    const { id: userProfileId, userId, ...restUserProfile } = userProfile;
 
     const updatedUser = await Prisma.user.update({
       where: {
