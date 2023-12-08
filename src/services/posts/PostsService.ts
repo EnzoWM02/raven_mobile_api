@@ -6,7 +6,12 @@ export default class PostsService {
     return await Prisma.post.findMany({
       include: {
         owner: true,
-        likes: true,
+        _count: {
+          select: {
+            comments: true,
+            likes: true,
+          }
+        }
       }
     });
   }
@@ -18,7 +23,12 @@ export default class PostsService {
       },
       include: {
         owner: true,
-        likes: true,
+        _count: {
+          select: {
+            comments: true,
+            likes: true,
+          }
+        }
       }
     });
   }
