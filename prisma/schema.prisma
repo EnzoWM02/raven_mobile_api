@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
 }
 
@@ -22,7 +22,7 @@ model User {
   userProfile       UserProfile?
   loginToken        LoginToken?
   //eu acho que isso ta invertido ---
-  followers         UserFollowing[] @relation("UserFollower")
+  followedBy        UserFollowing[] @relation("UserFollowedBy")
   following         UserFollowing[] @relation("UserFollowing")
   // --------
   posts             Post[]
@@ -69,14 +69,14 @@ model LoginToken {
 }
 
 model UserFollowing {
-  follower    User     @relation("UserFollower", fields: [followerId], references: [id])
-  followerId  Int      @map("follower_id") //Esse é o que salva no banco, é o id do usuario dono da relacao
-  following   User     @relation("UserFollowing", fields: [followingId], references: [id]) //Isso aq é pro prisma entender
-  followingId Int      @map("following_id") //Essa é o id do cara seguido
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  user       User     @relation("UserFollowing", fields: [userId], references: [id])
+  userId     Int      @map("user_id") //Id do usuario dono da relacao
+  followed   User     @relation("UserFollowedBy", fields: [followedId], references: [id])
+  followedId Int      @map("followed_id") //Essa é o id do cara seguido
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
-  @@id([followerId, followingId])
+  @@id([userId, followedId])
   @@map("user_followings")
 }
 

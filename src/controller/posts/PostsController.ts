@@ -33,7 +33,6 @@ postsControllerRouter.get('/', async (req: Request, res: Response, next: NextFun
 
 postsControllerRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   const id = parseInt(req.params.id);
-  console.log('id', req.params.id);
   if (!id) return next(new HttpError(`This request needs a post id`, 405));
   try {
     const post = await postsService.findPost(id);

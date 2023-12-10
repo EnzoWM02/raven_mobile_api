@@ -13,6 +13,12 @@ export interface UserRequest extends Request {
   };
 }
 
+interface FollowingRequest extends Request {
+  body: {
+    userId: number,
+  }
+}
+
 userControllerRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.send(await userService.findAllUsers());
@@ -67,5 +73,42 @@ userControllerRouter.delete('/', async (req: UserRequest, res: Response, next: N
     next(new HttpError('Could not delete post report', 502, e));
   }
 });
+
+userControllerRouter.post('/:id/follow', async (req: FollowingRequest, res: Response, next: NextFunction) => {
+  const id = parseInt(req.params.id);
+  if (!id) return next(new HttpError(`This request needs an user id`, 405));
+
+  try {
+    const followObj = await userService.toggleFollowOnUser(id, req.body.userId);
+    res.status(200).send(followObj);
+  } catch (e) {
+    next(new HttpError('Could not toggle user follow', 502, e));
+  }
+})
+
+userControllerRouter.get('/:id/followedBy', async (req: FollowingRequest, res: Response, next: NextFunction) => {
+  const id = parseInt(req.params.id);
+  if (!id) return next(new HttpError(`This request needs an user id`, 405));
+
+  try {
+    const followObj = await userService.findUserFollowedBy(id);
+    res.status(200).send(followObj);
+  } catch (e) {
+    next(new HttpError('Could not find user followers', 502, e));
+  }
+})
+
+userControllerRouter.get('/:id/following', async (req: FollowingRequest, res: Response, next: NextFunction) => {
+  const id = parseInt(req.params.id);
+  if (!id) return next(new HttpError(`This request needs an user id`, 405));
+
+  try {
+    const followObj = await userService.findUserFollowings(id);
+    res.status(200).send(followObj);
+  } catch (e) {
+    next(new HttpError('Could not find user followings', 502, e));
+  }
+})
+
 
 export default userControllerRouter;
