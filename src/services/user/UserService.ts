@@ -145,4 +145,13 @@ export default class UserService {
         }
       })
     }
+
+    async userIsFollowing (userId: number, followedId: number) {
+      return await Prisma.userFollowing.count({
+        where: {
+          userId,
+          followedId,
+        }
+      })
+    }
 }

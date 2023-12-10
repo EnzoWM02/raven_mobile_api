@@ -110,5 +110,20 @@ userControllerRouter.get('/:id/following', async (req: FollowingRequest, res: Re
   }
 })
 
+userControllerRouter.post('/:id/isFollowing', async (req: FollowingRequest, res: Response, next: NextFunction) => {
+  const id = parseInt(req.params.id);
+  if (!id) return next(new HttpError(`This request needs an user id`, 405));
+
+  try {
+    const isFollowing = await userService.userIsFollowing(id, req.body.userId);
+    if (isFollowing > 0) {
+      return res.status(200).send(true);
+    }
+    return res.status(200).send(false);
+  } catch (e) {
+    next(new HttpError('Could not find user followings', 502, e));
+  }
+})
+
 
 export default userControllerRouter;
