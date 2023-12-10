@@ -35,6 +35,9 @@ export default class SearchService {
         },
       },
       take: SEARCH_LIMIT,
+      include: {
+        likes: true
+      }
     });
     
     return results;
