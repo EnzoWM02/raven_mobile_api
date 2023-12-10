@@ -83,6 +83,15 @@ export default class PostsService {
             }
           }
         }
+      },
+      include: {
+        owner: true,
+        likes: true,
+        _count: {
+          select: {
+            comments: true,
+          }
+        }
       }
     })
   }
