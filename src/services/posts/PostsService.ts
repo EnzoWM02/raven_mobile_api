@@ -72,4 +72,18 @@ export default class PostsService {
         }
     })
   }
+
+  async findPostByUserFollowing(userId: number) {
+    return await Prisma.post.findMany({
+      where: {
+        owner: {
+          followedBy: {
+            some: {
+              userId
+            }
+          }
+        }
+      }
+    })
+  }
 }

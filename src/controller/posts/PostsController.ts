@@ -23,6 +23,18 @@ interface LikeRequest extends Request {
 postsControllerRouter.use('/report', postsReportControllerRouter);
 postsControllerRouter.use('/comment', commentsControllerRoute);
 
+postsControllerRouter.get('/:ownerId/following', async (req: Request, res: Response, next: NextFunction) => {
+  const ownerId = parseInt(req.params.ownerId);
+  if (!ownerId) return next(new HttpError(`This request needs a post id`, 405));
+  try {
+    const posts = await postsService.findPostByUserFollowing(ownerId);
+
+    res.status(200).send(posts);
+  } catch (e) {
+    next(new HttpError('Unable to fetch post', 404, e));
+  }
+})
+
 postsControllerRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     res.send(await postsService.findAllPosts());
