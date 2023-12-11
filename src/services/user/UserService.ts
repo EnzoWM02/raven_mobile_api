@@ -125,17 +125,17 @@ export default class UserService {
       });
 
       if (createdFollow) {
-        const followedUser = await Prisma.user.findFirst({
+        const user = await Prisma.user.findFirst({
           where: {
-            id: followedId,
+            id: userId,
           }
         })
 
-        if (followedUser) {
+        if (user) {
           await notificationsService.createNotification({
             userId: followedId,
             fromId: userId,
-            content: stringUtils.replacePlaceholder(NotificationMessages.UserFollowing, followedUser.name),
+            content: stringUtils.replacePlaceholder(NotificationMessages.UserFollowing, user.name),
             type: NotificationType.UserFollowing,
           })
         }
