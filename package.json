@@ -2,7 +2,7 @@
   "name": "node_server",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "src/index.ts",
   "nodemonConfig": {
     "ignore": [
       "**/*.test.ts",
@@ -13,12 +13,13 @@
     "watch": [
       "src"
     ],
-    "exec": "node -r tsconfig-paths/register -r ts-node/register ./src/app.ts",
+    "exec": "node -r tsconfig-paths/register -r ts-node/register ./src/index.ts",
     "ext": "ts, js"
   },
   "scripts": {
-    "dev": "nodemon src/app.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "prisma generate"
   },
   "author": "",
   "license": "ISC",
