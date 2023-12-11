@@ -40,7 +40,8 @@ export default class LikesService {
           userId: post.ownerId,
           fromId: userId,
           content: stringUtils.replacePlaceholder(NotificationMessages.LikedPost, user.name, post.content),
-          type: NotificationType.LikedPost
+          type: NotificationType.LikedPost,
+          postId,
         })
       }
     }

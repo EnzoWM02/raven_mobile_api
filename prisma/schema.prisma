@@ -35,8 +35,8 @@ model User {
   reports             Report[]
   blocked             UserBlock[]     @relation("UserBlocked")
   blockedBy           UserBlock[]     @relation("UserBlockedBy")
-  notifications       Notification[] @relation("NotificationReceptor")
-  notificationsSended Notification[] @relation("NotificationSender")
+  notifications       Notification[]  @relation("NotificationReceptor")
+  notificationsSended Notification[]  @relation("NotificationSender")
 
   @@map("users")
 }
@@ -114,23 +114,24 @@ model UserGroup {
 }
 
 model Post {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  owner     User      @relation(fields: [ownerId], references: [id])
-  ownerId   Int       @map("owner_id")
-  content   String
+  id           Int            @id @default(autoincrement())
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  owner        User           @relation(fields: [ownerId], references: [id])
+  ownerId      Int            @map("owner_id")
+  content      String
   //All reposts this post has
-  reposts   Post[]    @relation("reposts")
+  reposts      Post[]         @relation("reposts")
   //If this post is a repost, this relation will have the original post
-  repost    Post?     @relation("reposts", fields: [repostId], references: [id])
-  repostId  Int?      @map("repost_id")
-  group     Group?    @relation(fields: [groupId], references: [id])
-  groupId   Int?      @map("group_id")
-  likes     Like[]
-  comments  Comment[]
-  medias    Media[]
-  reports   Report[]
+  repost       Post?          @relation("reposts", fields: [repostId], references: [id])
+  repostId     Int?           @map("repost_id")
+  group        Group?         @relation(fields: [groupId], references: [id])
+  groupId      Int?           @map("group_id")
+  likes        Like[]
+  comments     Comment[]
+  medias       Media[]
+  reports      Report[]
+  Notification Notification[]
 
   @@map("posts")
 }
@@ -221,7 +222,9 @@ model Notification {
   content   String
   from      User?    @relation("NotificationSender", fields: [fromId], references: [id])
   fromId    Int?     @map("from_id")
-  active    Boolean
+  post      Post?    @relation(fields: [postId], references: [id])
+  postId    Int?     @map("post_id")
+  active Boolean
 
-    @@map("notifications")
+  @@map("notifications")
 }

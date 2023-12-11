@@ -6,6 +6,7 @@ export interface NotificationDTO {
   content: string;
   fromId?: number;
   type?: string;
+  postId?: number;
 }
 
 export enum NotificationType {
