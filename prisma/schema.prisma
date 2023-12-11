@@ -9,49 +9,54 @@ datasource db {
 }
 
 model User {
-  id                Int             @id @default(autoincrement())
-  email             String          @unique
-  password          String
-  name              String
-  uniqueKey         String          @unique @map("unique_key")
-  phone             String?
-  birthDate         DateTime        @map("birth_date")
-  preferredLanguage String          @default("pt_BR") @map("preferred_language")
-  createdAt         DateTime        @default(now()) @map("created_at")
-  updatedAt         DateTime        @updatedAt @map("updated_at")
-  userProfile       UserProfile?
-  loginToken        LoginToken?
+  id                  Int             @id @default(autoincrement())
+  email               String          @unique
+  password            String
+  name                String
+  uniqueKey           String          @unique @map("unique_key")
+  phone               String?
+  birthDate           DateTime        @map("birth_date")
+  preferredLanguage   String          @default("pt_BR") @map("preferred_language")
+  createdAt           DateTime        @default(now()) @map("created_at")
+  updatedAt           DateTime        @updatedAt @map("updated_at")
+  userProfile         UserProfile?
+  loginToken          LoginToken?
   //eu acho que isso ta invertido ---
-  followedBy        UserFollowing[] @relation("UserFollowedBy")
-  following         UserFollowing[] @relation("UserFollowing")
+  followedBy          UserFollowing[] @relation("UserFollowedBy")
+  following           UserFollowing[] @relation("UserFollowing")
   // --------
-  posts             Post[]
+  posts               Post[]
   //The groups this user is master of
-  masterGroups      Group[]
+  masterGroups        Group[]
   //The groups this user participates
-  groups            UserGroup[]
-  likes             Like[]
-  comments          Comment[]
-  reports           Report[]
-  blocked           UserBlock[]     @relation("UserBlocked")
-  blockedBy         UserBlock[]     @relation("UserBlockedBy")
+  groups              UserGroup[]
+  likes               Like[]
+  comments            Comment[]
+  reports             Report[]
+  blocked             UserBlock[]     @relation("UserBlocked")
+  blockedBy           UserBlock[]     @relation("UserBlockedBy")
+  notifications       Notification[] @relation("NotificationReceptor")
+  notificationsSended Notification[] @relation("NotificationSender")
 
   @@map("users")
 }
 
 model UserProfile {
-  id               Int      @id @default(autoincrement())
-  user             User     @relation(fields: [userId], references: [id])
-  userId           Int      @unique @map("user_id")
-  profilePictureId Int?     @map("profile_picture_id")
-  bannerId         Int?     @map("banner_id")
-  primaryColor     String   @default("#ffffff") @map("primary_color")
-  secondaryColor   String   @default("#f6f6f6") @map("secondary_color")
-  backgroundColor  String   @default("ffffff") @map("background_color")
-  backgroundImage  Int?     @map("background_image")
-  bio              String?
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  id                Int      @id @default(autoincrement())
+  user              User     @relation(fields: [userId], references: [id])
+  userId            Int      @unique @map("user_id")
+  profilePicture    Media?   @relation("profilePicture", fields: [profilePictureId], references: [id])
+  bannerPicture     Media?   @relation("bannerPicture", fields: [bannerPictureId], references: [id])
+  profilePictureId  Int?     @unique
+  bannerPictureId   Int?     @unique
+  primaryColor      String   @default("#ffffff") @map("primary_color")
+  secondaryColor    String   @default("#f6f6f6") @map("secondary_color")
+  backgroundColor   String   @default("ffffff") @map("background_color")
+  backgroundImage   Media?   @relation("backgroundImage", fields: [backgroundImageId], references: [id])
+  backgroundImageId Int?     @unique
+  bio               String?
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
 
   @@map("user_profile")
 }
@@ -159,13 +164,16 @@ model Comment {
 }
 
 model Media {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    Int      @map("post_id")
-  fileId    Int      @map("file_id")
-  tags      Tag[]
+  id              Int          @id @default(autoincrement())
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+  post            Post?        @relation(fields: [postId], references: [id])
+  postId          Int?         @map("post_id")
+  fileId          Int          @map("file_id")
+  tags            Tag[]
+  profilePicture  UserProfile? @relation("profilePicture")
+  bannerPicture   UserProfile? @relation("bannerPicture")
+  backgroundImage UserProfile? @relation("backgroundImage")
 
   @@map("medias")
 }
@@ -201,4 +209,19 @@ model UserBlock {
 
   @@id([userId, blockedUserId])
   @@map("user_blocks")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  user      User     @relation("NotificationReceptor", fields: [userId], references: [id])
+  userId    Int      @map("user_id")
+  type      String?
+  content   String
+  from      User?    @relation("NotificationSender", fields: [fromId], references: [id])
+  fromId    Int?     @map("from_id")
+  active    Boolean
+
+    @@map("notifications")
 }

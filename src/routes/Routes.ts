@@ -1,4 +1,5 @@
 import helloWorldController from 'controller/helloWorld/HelloWorldController';
+import notificationControllerRouter from 'controller/notifications/NotificationController';
 import postsControllerRouter from 'controller/posts/PostsController';
 import searchControllerRouter from 'controller/search/SearchController';
 import userControllerRouter from 'controller/user/UserController';
@@ -12,5 +13,6 @@ routes.use('/user', userControllerRouter);
 routes.use('/hello', helloWorldController);
 routes.use('/post', postsControllerRouter);
 routes.use('/search', searchControllerRouter);
+routes.use('/notification', notificationControllerRouter);
 
 export default routes;
