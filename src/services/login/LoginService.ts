@@ -17,7 +17,7 @@ export default class LoginService {
     }
     
     if (user.loginToken) {
-      this.loginTokenService.delete(user.loginToken.id);
+      await this.loginTokenService.delete(user.loginToken.id);
     }
 
     const token = await this.generateUserToken();
