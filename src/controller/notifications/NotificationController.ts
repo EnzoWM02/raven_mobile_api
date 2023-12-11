@@ -1,13 +1,13 @@
 import { Notification } from "@prisma/client";
 import { NextFunction, Request, Response, Router } from "express";
-import NotificationsService from "services/notifications/NotificationsService";
+import NotificationsService, { NotificationDTO } from "services/notifications/NotificationsService";
 import HttpError from "utils/HttpError";
 
 const notificationControllerRouter = Router();
 const notificationsService = new NotificationsService();
 
 interface NotificationRequest extends Request {
-    body: Notification
+    body: NotificationDTO
 }
 
 notificationControllerRouter.get('/:userId', async (req: Request, res: Response, next: NextFunction) => {

@@ -1,5 +1,6 @@
 import { User, UserProfile } from '@prisma/client';
 import { NextFunction, Request, Response, Router } from 'express';
+import NotificationsService from 'services/notifications/NotificationsService';
 import UserService from 'services/user/UserService';
 import HttpError from 'utils/HttpError';
 

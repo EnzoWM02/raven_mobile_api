@@ -3,8 +3,15 @@ import { Prisma } from 'prisma/client';
 import { ILogin } from 'controller/login/LoginController';
 import { CreateAccountRequest } from 'controller/login/RegisterAccountController';
 import { UserRequest } from 'controller/user/UserController';
+import NotificationsService, { NotificationMessages, NotificationType } from 'services/notifications/NotificationsService';
+import StringUtils from 'utils/StringUtils';
+
+const notificationsService = new NotificationsService();
+const stringUtils = new StringUtils();
 
 export default class UserService {
+
+
   async createUser({ user, userProfile }: UserRequest['body']) {
     return await Prisma.user.create({
       data: {
@@ -110,12 +117,31 @@ export default class UserService {
     });
 
     if (hasFollow === 0) {
-      return await Prisma.userFollowing.create({
+      const createdFollow = await Prisma.userFollowing.create({
         data: {
           userId,
           followedId,
         },
       });
+
+      if (createdFollow) {
+        const followedUser = await Prisma.user.findFirst({
+          where: {
+            id: followedId,
+          }
+        })
+
+        if (followedUser) {
+          await notificationsService.createNotification({
+            userId: followedId,
+            fromId: userId,
+            content: stringUtils.replacePlaceholder(NotificationMessages.UserFollowing, followedUser.name),
+            type: NotificationType.UserFollowing,
+          })
+        }
+      }
+
+      return createdFollow;
     }
 
     return await Prisma.userFollowing.delete({
