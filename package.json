@@ -17,6 +17,7 @@
     "ext": "ts, js"
   },
   "scripts": {
+    "build": "tsc",
     "dev": "nodemon src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "prisma generate"
