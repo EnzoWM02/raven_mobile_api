@@ -1,10 +1,10 @@
 import express from 'express';
-import routes from './routes/Routes';
+import routes from 'routes/Routes';
 var cors = require('cors');
-import { env } from './config/globals';
-import bypassAuthRoutes from './routes/BypassAuthRoutes';
-import handleHttpError from './middlewares/errors/handleHttpError';
-import handleHeader from './middlewares/header/handleHeader';
+import { env } from 'config/globals';
+import bypassAuthRoutes from 'routes/BypassAuthRoutes';
+import handleHttpError from 'middlewares/errors/handleHttpError';
+import handleHeader from 'middlewares/header/handleHeader';
 
 const app = express();
 

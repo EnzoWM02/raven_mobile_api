@@ -52,3 +52,17 @@ npx prisma generate
 ```
 npm run dev
 ```
+
+## Production
+
+To run the API in production
+
+- First transpile typescript code into javascript code
+```
+npm run build
+```
+
+- Then, run the javascript code using ts-node to configure paths
+```
+node -r ts-node/register/transpile-only -r tsconfig-paths/register dist/app.js
+```
