@@ -7,7 +7,13 @@ export default class PostsReportService {
       include: {
         post: {
           include: {
-            owner: true            
+            owner: true,
+            likes: true,
+            _count: {
+              select: {
+                comments: true,
+              }
+            }       
           }
         },
         user: true,
