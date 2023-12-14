@@ -114,7 +114,8 @@ postsControllerRouter.delete('/:id', async (req: PostRequest, res: Response, nex
   if (!id) return next(new HttpError(`This request needs a post id`, 405));
 
   try {
-    await postsService.deletePost(id);
+    const deletedPost = await postsService.deletePost(id);
+    res.status(200).send(deletedPost);
   } catch (e) {
     next(new HttpError('Could not delete post', 502, e));
   }

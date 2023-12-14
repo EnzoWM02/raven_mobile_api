@@ -139,7 +139,7 @@ model Post {
 model Like {
   user      User     @relation(fields: [userId], references: [id])
   userId    Int      @map("user_id")
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int      @map("post_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -154,10 +154,10 @@ model Comment {
   updatedAt       DateTime  @updatedAt @map("updated_at")
   owner           User      @relation(fields: [ownerId], references: [id])
   ownerId         Int       @map("owner_id")
-  originalPost    Post      @relation(fields: [originalPostId], references: [id])
+  originalPost    Post      @relation(fields: [originalPostId], references: [id], onDelete: Cascade)
   originalPostId  Int       @map("original_post_id")
   parentCommentId Int?      @map("parent_comment_id")
-  parentComment   Comment?  @relation("parentComment", fields: [parentCommentId], references: [id])
+  parentComment   Comment?  @relation("parentComment", fields: [parentCommentId], references: [id], onDelete: Cascade)
   childComments   Comment[] @relation("parentComment")
   content         String
 
@@ -168,7 +168,7 @@ model Media {
   id              Int          @id @default(autoincrement())
   createdAt       DateTime     @default(now()) @map("created_at")
   updatedAt       DateTime     @updatedAt @map("updated_at")
-  post            Post?        @relation(fields: [postId], references: [id])
+  post            Post?        @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId          Int?         @map("post_id")
   fileId          Int          @map("file_id")
   tags            Tag[]
@@ -194,7 +194,7 @@ model Report {
   updatedAt DateTime @updatedAt @map("updated_at")
   user      User     @relation(fields: [userId], references: [id])
   userId    Int      @map("user_id")
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int      @map("post_id")
 
   @@map("reports")
@@ -222,7 +222,7 @@ model Notification {
   content   String
   from      User?    @relation("NotificationSender", fields: [fromId], references: [id])
   fromId    Int?     @map("from_id")
-  post      Post?    @relation(fields: [postId], references: [id])
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int?     @map("post_id")
   active Boolean
 
